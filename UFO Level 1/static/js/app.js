@@ -1,62 +1,73 @@
 // from data.js
 var tableData = data;
-console.log(tableData)
 
-// Using d3 to reference my table body
+
+// Using d3 to reference my HTML's table body
 var tbody = d3.select("tbody");
 
 // Obtaining UFO Sighting values for each column
-tableData.forEach(function(ufoSighting){
-    console.log(ufoSighting);
-
-    // Appending one table row 'tr' for each UFO Sighting object
+tableData.forEach(ufoSighting => {
+    
+    // Appending a table row 'tr' for each UFO sighting object
     var row = tbody.append("tr");
 
-    // Using 'Object.entries' to console.log each UFO Sighting value
-    Object.entries(ufoSighting).forEach(function([key, value]){
-        console.log(key, value);
-        // Appending a cell to the row for each value
+    // Using Object.values and appending a cell to the row for each value 
+    Object.values(ufoSighting).forEach((value) =>{
         var cell = row.append("td");
         cell.text(value);
     });
-
 });
 
-// Select the button
+// Creating an array of all the unique datetime values
+var dateTimes = tableData.map(datetime => datetime.datetime)
+
+// Selecting the filter button
 var button = d3.select("#filter-btn");
+
+// Enabling d3 event handling
 button.on("click", function() {
-    tbody.html("");
+
+    // Clearing the tbody table and appending new filtered results
+    var tbody = d3.select("tbody")
+    tbody.html("")
 
     // Select the input date get the raw HTML nodes
-    var inputElement = d3.select("datetime");
+    var inputElement = d3.select("#datetime");
 
-    // Get the value property of the input date, state, shape
+    // Get the value property of the input date
     var inputValue = inputElement.property("value");
 
-    // console.log input value
     console.log(inputValue);
+    if(dateTimes.includes(inputValue)){
+        // Filter date with datetime equal to input value
+        var filteredData = tableData.filter(ufoSighting => ufoSighting.datetime === inputValue)
 
-    // Filter date with datetime equal to input value
-    var filteredData = tableData.filter(sighting => sighting.datetime === inputValue);
-
-    // console.log filter values
-    console.log(filteredData);
-
-    filteredData.forEach(function(selections) {
-
-    console.log(selections);
-
-    // Append one table row 'tr' for each UFO Sighting object
-    var row = tbody.append("tr");
-
-    // Use 'Object.entries' to console.log each UFO Sighting value
-    Object.entries(selections).forEach(function([key, value]){
-        console.log(key, value);
-
-        // Append a cell to the row for each value
-        var cell = row.append("td");
-        cell.text(value);
-    });
-
-    });
+        console.log(filteredData)
+    
+        filteredData.forEach(ufoSighting => {
+    
+            // Appending a table row 'tr' for each UFO sighting object
+            var row = tbody.append("tr")
+    
+            // Using Object.values and appending a cell to the row for each value 
+            Object.values(ufoSighting).forEach((value) =>{
+                var cell = row.append("td")
+            cell.text(value)
+            })
+        })
+    }
+    else {
+        tableData.forEach(ufoSighting => {
+    
+            // Appending a table row 'tr' for each UFO sighting object
+            var row = tbody.append("tr");
+        
+            // Using Object.values and appending a cell to the row for each value 
+            Object.values(ufoSighting).forEach((value) =>{
+                var cell = row.append("td");
+                cell.text(value);
+            });
+        });
+        alert("The searched date is currently not in our database, please try a different date.")
+    }
 });
